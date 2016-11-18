@@ -438,7 +438,7 @@ function init() {
     }
 
     // when last path was built, create new one
-    if (pathes.filter(hpath => hpath.alive).length < 8) {
+    if (pathes.filter(hpath => hpath.alive).length < 25) {
       pathes.push({alive: true, tree: buildTreePath(grid, _.random(6, 20), Date.now())});
       lastPick = curTime + hexPath.length * 50;
     }
