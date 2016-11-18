@@ -316,7 +316,7 @@ function buildTreePath(grid = [], length = 10, timeDelta = Date.now()) {
     let curTime = time;
 
     for (let i = 1; i < distance + 1; i += 1) {
-      curTime += _.random(15, 25);
+      curTime += _.random(25, 45);
 
       let t = 1.0 / targetDistance * i;
       let hx = rootHex.cubeX + (x - rootHex.cubeX) * t;
@@ -341,7 +341,7 @@ function buildTreePath(grid = [], length = 10, timeDelta = Date.now()) {
     // if distance is odd number we should include last hex in results
     if (includeTarget) {
       targetHex = grid[targetHexIndex];
-      hexs.push({index: targetHexIndex, color: hexColor, time: curTime + _.random(15, 25)});
+      hexs.push({index: targetHexIndex, color: hexColor, time: curTime + _.random(25, 45)});
     }
 
     let childDistance = Math.floor(distance / 2);
