@@ -400,7 +400,7 @@ function processTreePath(grid = [], hexPath = [], curTime) {
 function init() {
   resetCanvas();
 
-  const HEX_RADIUS = 15;
+  const HEX_RADIUS = 10;
   const HEX_ANGLE = 0;
 
   let grid = buildGrid(canvasEl.width, canvasEl.height, HEX_RADIUS);
