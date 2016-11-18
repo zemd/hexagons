@@ -317,7 +317,7 @@ function buildTreePath(grid = [], length = 10, timeDelta = Date.now()) {
     let curTime = time;
 
     for (let i = 1; i < distance + 1; i += 1) {
-      curTime += _.random(45, 95);
+      curTime += _.random(45, 75);
 
       let t = 1.0 / targetDistance * i;
       let hx = rootHex.cubeX + (x - rootHex.cubeX) * t;
@@ -413,7 +413,7 @@ function init() {
   drawGrid(grid, HEX_ANGLE);
 
   let lastFadeTime = Date.now();
-  let lastPick = Date.now();
+  let lastClean = Date.now();
 
   //let hexPath = buildRandomPath(grid, _.random(250, 300));
   let hexPath = buildTreePath(grid, _.random(10, 20), Date.now());
@@ -424,11 +424,14 @@ function init() {
     let curTime = Date.now();
 
     // process path
-    pathes
-      .filter(hpath => hpath.alive)
-      .map(hpath => processTreePath(grid, hpath, curTime));
+    for (let i = 0; i < pathes.length; i += 1) {
+      if (!pathes[i].alive) {
+        continue;
+      }
+      processTreePath(grid, pathes[i], curTime)
+    }
 
-    // each 450ms fade canvas
+    // each 50ms fade canvas
     if (curTime > lastFadeTime) {
       ctx.globalCompositeOperation = 'destination-in';
       ctx.fillStyle = createjs.Graphics.getHSL(0, 0, 100, 0.95);
@@ -439,11 +442,13 @@ function init() {
 
     // when last path was built, create new one
     if (pathes.filter(hpath => hpath.alive).length < 25) {
-      pathes.push({alive: true, tree: buildTreePath(grid, _.random(6, 20), Date.now())});
-      lastPick = curTime + hexPath.length * 50;
+      pathes.push({alive: true, tree: buildTreePath(grid, _.random(6, 20), Date.now()+800)});
     }
     drawGrid(grid, HEX_ANGLE);
-    _.remove(pathes, n => !n.alive);
+    if (lastClean < curTime) {
+      _.remove(pathes, n => !n.alive);
+      lastClean += 2000;
+    }
   });
 }
 init();
