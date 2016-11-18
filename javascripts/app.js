@@ -385,16 +385,19 @@ function buildTreePath(grid = [], length = 10, timeDelta = Date.now()) {
   return hexs;
 }
 
-function processTreePath(grid = [], hexPath = [], curTime) {
-  for (let i = hexPath.length - 1; i >= 0; i -= 1) {
-    let hexInfo = hexPath[i];
+function processTreePath(grid = [], hexPath, curTime) {
+  for (let i = hexPath.tree.length - 1; i >= 0; i -= 1) {
+    let hexInfo = hexPath.tree[i];
     let hex = grid[hexInfo.index];
 
     if (hexInfo.time < curTime) {
       hex.clean = false;
       hex.color = hexInfo.color;
-      hexPath.splice(i, 1);
+      hexPath.tree.splice(i, 1);
     }
+  }
+  if (!hexPath.tree.length) {
+    hexPath.alive = false;
   }
 }
 
@@ -414,13 +417,16 @@ function init() {
 
   //let hexPath = buildRandomPath(grid, _.random(250, 300));
   let hexPath = buildTreePath(grid, _.random(10, 20), Date.now());
+  let pathes = [{alive: true, tree: hexPath}];
 
   createjs.Ticker.timingMode = createjs.Ticker.RAF;
   createjs.Ticker.on('tick', function (event) {
     let curTime = Date.now();
 
     // process path
-    processTreePath(grid, hexPath, curTime);
+    pathes
+      .filter(hpath => hpath.alive)
+      .map(hpath => processTreePath(grid, hpath, curTime));
 
     // each 450ms fade canvas
     if (curTime > lastFadeTime) {
@@ -432,11 +438,12 @@ function init() {
     }
 
     // when last path was built, create new one
-    if (curTime > lastPick || !hexPath.length) {
-      hexPath = buildTreePath(grid, _.random(6, 20), Date.now());
+    if (pathes.filter(hpath => hpath.alive).length < 2) {
+      pathes.push({alive: true, tree: buildTreePath(grid, _.random(6, 20), Date.now())});
       lastPick = curTime + hexPath.length * 50;
     }
     drawGrid(grid, HEX_ANGLE);
+    _.remove(pathes, n => !n.alive);
   });
 }
 init();
