@@ -306,6 +306,7 @@ function buildTreePath(grid = [], length = 10, timeDelta = Date.now()) {
     let directionFn = directions[direction];
     let [x, z, y] = directionFn(rootHex.cubeX, rootHex.cubeZ, rootHex.cubeY, targetDistance);
 
+    // searching main target
     let targetHexIndex = _.findIndex(grid, {cubeX: x, cubeZ: z, cubeY: y});
     if (targetHexIndex === -1) {
       // console.warn('No such target found');
@@ -344,8 +345,8 @@ function buildTreePath(grid = [], length = 10, timeDelta = Date.now()) {
       hexs.push({index: targetHexIndex, color: hexColor, time: curTime + _.random(25, 45)});
     }
 
-    let childDistance = Math.floor(distance / 2);
-    if (childDistance === 0) {
+    let childDistance = Math.floor(distance - 2);
+    if (childDistance <= 0) {
       // no need to traverse if no children to draw
       return;
     }
@@ -432,7 +433,7 @@ function init() {
 
     // when last path was built, create new one
     if (curTime > lastPick || !hexPath.length) {
-      hexPath = buildTreePath(grid, _.random(10, 20), Date.now());
+      hexPath = buildTreePath(grid, _.random(6, 20), Date.now());
       lastPick = curTime + hexPath.length * 50;
     }
     drawGrid(grid, HEX_ANGLE);
